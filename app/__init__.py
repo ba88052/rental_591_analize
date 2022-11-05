@@ -1,18 +1,20 @@
 import numpy as np
 import pandas as pd
+
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
-import spider_591
-import json
 
-app= Flask(__name__, template_folder="./templates")
-app.config.from_object("config.DevelopmentConfig")
+import json
+import app.spider_591 as spider_591
+
+app = Flask(__name__)
+app.config.from_object("app.config.DevelopmentConfig")
 CORS(app)
 
 @app.route("/test", methods=["GET"])
 def get_test():
     rental_591_spider = spider_591.Rantal_591_Spider()
-    with open ("test.txt", "r") as test:
+    with open ("app/test.txt", "r") as test:
         rental_params = json.loads(test.read())
         total_count, houses = rental_591_spider.search(rental_params)
     all_rental = {}
@@ -40,7 +42,7 @@ def post_input():
     return([total_count, js])
 
 
-if __name__ == "__main__":
-    app.run(port=8081)
+# if __name__ == "__main__":
+#     app.run(port=8081)
 
-print("ok")
+# print("ok")
