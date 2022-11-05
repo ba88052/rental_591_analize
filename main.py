@@ -1,0 +1,10 @@
+from spider_app import app
+
+@app.route("/")
+def index():
+    return "Hello!! Welcome to rental_591_analize"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=80, debug = False)
+
+print("ok")
