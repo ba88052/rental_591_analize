@@ -24,7 +24,7 @@ def get_test():
         all_rental[i["post_id"]] = [i[inf] for inf in infor]+(rental_591_spider.get_detail_we_need(i["post_id"], spider = rental_591_spider))
     df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)
     js = df.to_json()
-    return([total_count, js])
+    return(js)
 
 @app.route("/spider_591", methods=["POST"])
 def post_input():
@@ -39,7 +39,7 @@ def post_input():
         all_rental[i["post_id"]] = [i[inf] for inf in infor]+(rental_591_spider.get_detail_we_need(i["post_id"], spider = rental_591_spider))
     df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)
     js = df.to_json()
-    return([total_count, js])
+    return(js)
 
 
 # if __name__ == "__main__":
