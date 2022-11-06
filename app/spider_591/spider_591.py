@@ -4,7 +4,9 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
-
+from google.cloud import bigquery as bq
+from datetime import datetime
+import os
 
 class Rantal_591_Spider():
     def __init__(self):
@@ -109,3 +111,65 @@ class Rantal_591_Spider():
         information.append(remark)
         information.append(rental["favData"]["price"])
         return information
+
+
+if __name__ == "__main__":
+    #每日591爬蟲任務
+    #與Bigquery建立連線並確認金鑰沒問題
+    #應顯示 <google.cloud.bigquery.client.Client object at xxxxxxxxxxxx>
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="./GCP_key.json"
+    client = bq.Client()
+    print(client)
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    #爬取資料
+    rental_591_spider = Rantal_591_Spider()
+        
+    filter_params = {
+        # 篩選條件
+        'showMore': '1', #(套用更多搜尋方式)默認開啟
+        'searchtype': '1', #(搜索型態)1-鄉鎮, 2-商圈, 3-學校, 4-捷運
+        'region': '8',  # (城市) 台中
+        'section':"104", #(區域) 西屯區 ##詳閱文件
+        # 'multiPrice': '0_5000,5000_10000',  # (租金)0_5000, 5000_10000, 10000_20000, 20000_30000, 30000_40000, 40000_ 
+        # 'rentprice': '3000,6000',  #(自訂租金範圍)
+        # 'kind': '2', #(類型)0-不限, 1-整層住房, 2-獨立套房, 3-分租套房, 4-雅房, 8-車位, 24-其他, 
+        # 'shape': '3',  #(型態)1-公寓, 2-電梯大樓, 3-透天厝, 4-別墅
+        # 'multiNotice': 'all_sex',  # (須知)all_sex, boy, girl, not_cover
+        # 'multiRoom': '2,3',  #(格局)1-一房, 2-二房, 3-三房, 4-四房以上
+        # 'multiArea': '10_20,20_30,30_40', #(坪數)0_10, 10_20, 20_30, 30_40, 40_50, 50_
+        # 'area': '20,50',  # (自訂坪數範圍)
+        # 'multiFloor': '2_6',  #(樓層)0_1, 2_6, 6_12, 12_
+        # 'option': 'cold,washer,bed',  #(設備)
+    }
+    total_count, houses = rental_591_spider.search(filter_params)
+    print('搜尋結果房屋總數：', total_count)
+
+    all_rental = {}
+    infor = ["title", "kind_name", "community", "area", "section_name"]
+    columns = ["title", "kind", "community", "area", "section", "shape", "layout", "address","inName", "role", "phone", "mobile", "rule", "remark","price"]
+
+    for i in houses:
+        all_rental[i["post_id"]] = [i[inf] for inf in infor]+(rental_591_spider.get_detail_we_need(i["post_id"], spider = rental_591_spider))
+    rental_df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)
+    
+    #把df丟進bigquery
+    dataset_id = "spider_591_rental_SET"#設定 Dataset 名稱，可以修改
+    try:
+        dataset = bq.Dataset(f"{client.project}.{dataset_id}")
+        dataset.location = "asia-east1"     #設定資料位置，如不設定預設是 US
+        # dataset.default_table_expiration_ms = 30 * 24 * 60 * 60 * 1000    #設定資料過期時間，這邊設定 30 天過期
+        dataset.description = 'create_spider_591_rental_dataset location at asia-east1'    #設定 dataset 描述
+        dataset = client.create_dataset(dataset) # Make an API request.
+        print(f"Created dataset {client.project}.{dataset.dataset_id}")
+    except:
+        print(f"{dataset_id} Dataset Already Exist")
+
+    dataset_id = "spider_591_rental_SET"
+    dataset_ref = client.dataset(dataset_id)
+    table_id = f"{today}_TEST_TABLE" 
+    table_ref = dataset_ref.table(table_id)
+    job = client.load_table_from_dataframe(rental_df, table_ref, location="asia-east1")
+    job.result()  # Waits for table load to complete.
+    assert job.state == "DONE"
+    print("Today spider_591 is done.")

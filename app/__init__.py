@@ -1,11 +1,9 @@
 import numpy as np
 import pandas as pd
-
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
-
 import json
-import app.spider_591 as spider_591
+import app.spider_591.spider_591 as spider_591
 
 app = Flask(__name__)
 app.config.from_object("app.config.DevelopmentConfig")

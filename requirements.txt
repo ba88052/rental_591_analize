@@ -7,3 +7,5 @@ xgboost
 beautifulsoup4
 seaborn
 requests
+google-cloud-bigquery
+pyarrow
