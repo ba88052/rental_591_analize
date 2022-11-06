@@ -2,7 +2,7 @@
     "showMore": "1",
     "searchtype": "1",
     "region": "8",
-    "section":"104",
+    "section":"",
     "multiPrice": "",
     "rentprice": "",
     "kind": "",

@@ -114,7 +114,7 @@ class Rantal_591_Spider():
         return information
 
 
-    def daily_spider_to_GCP(self):
+    def daily_spider_to_GCP(self, test=True):
         #每日591爬蟲任務
         #與Bigquery建立連線並確認金鑰沒問題
         #應顯示 <google.cloud.bigquery.client.Client object at xxxxxxxxxxxx>
@@ -127,7 +127,7 @@ class Rantal_591_Spider():
         rental_591_spider = Rantal_591_Spider()
         with open ("app/spider_591/daily_spider_params.txt", "r") as params:
             filter_params  = json.loads(params.read())
-        total_count, houses = rental_591_spider.search(filter_params)
+        total_count, houses = rental_591_spider.search(filter_params, testing = test)
         print('搜尋結果房屋總數：', total_count)
 
         all_rental = {}

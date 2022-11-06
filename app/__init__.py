@@ -44,7 +44,7 @@ def post_input():
 
 @app.route("/daily_spider", methods=["GET"])
 def daily_spider():
-    spider_591.Rantal_591_Spider().daily_spider_to_GCP()
+    spider_591.Rantal_591_Spider().daily_spider_to_GCP(test = False)
     # 篩選條件
     return("Today spider_591 is done.")
 
