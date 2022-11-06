@@ -1,0 +1,16 @@
+{
+    "showMore": "1",
+    "searchtype": "1",
+    "region": "8",
+    "section":"104",
+    "multiPrice": "",
+    "rentprice": "",
+    "kind": "",
+    "shape": "",
+    "multiNotice": "",
+    "multiRoom": "",
+    "multiArea": "",
+    "area": "",
+    "multiFloor": "",
+    "option": ""
+}
