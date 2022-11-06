@@ -15,7 +15,8 @@ def get_test():
     rental_591_spider = spider_591.Rantal_591_Spider()
     with open ("app/test.txt", "r") as test:
         rental_params = json.loads(test.read())
-        houses = rental_591_spider.search(rental_params)
+        total_count, houses = rental_591_spider.search(rental_params)
+        print('搜尋結果房屋總數：', total_count)
     all_rental = {}
     infor = ["title", "kind_name", "community", "area", "section_name"]
     columns = ["title", "kind", "community", "area", "section", "shape", "layout", "address","inName", "role", "phone", "mobile", "rule", "remark","price"]
@@ -30,7 +31,8 @@ def post_input():
     rental_591_spider = spider_591.Rantal_591_Spider()
     # 篩選條件
     rental_params = request.get_json()
-    houses = rental_591_spider.search(rental_params)
+    total_count, houses = rental_591_spider.search(rental_params)
+    print('搜尋結果房屋總數：', total_count)
     all_rental = {}
     infor = ["title", "kind_name", "community", "area", "section_name"]
     columns = ["title", "kind", "community", "area", "section", "shape", "layout", "address","inName", "role", "phone", "mobile", "rule", "remark","price"]
