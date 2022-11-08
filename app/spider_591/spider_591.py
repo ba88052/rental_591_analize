@@ -212,8 +212,6 @@ class Rantal_591_Spider():
             job = client.load_table_from_dataframe(rental_df, table_id, location="asia-east1")
             job.result()  # Waits for table load to complete.
             assert job.state == "DONE"
-            print("Today spider_591 is done.")
-
             # pandas_gbq.to_gbq(rental_df, table_id, project_id = "rental591analize", if_exists = "append")
             print(f"{first_page}~{last_page-1}資料上傳成功")
         print("Today spider_591 is done.")
