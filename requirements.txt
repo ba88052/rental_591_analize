@@ -9,3 +9,4 @@ seaborn
 requests
 google-cloud-bigquery
 pyarrow
+pandas_gbq

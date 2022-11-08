@@ -172,7 +172,7 @@ class Rantal_591_Spider():
         except:
             print(f"{dataset_id} Dataset Already Exist")
         table_name = f"{today}_RENTAL"
-        table_id = f"{client.project}.{dataset.dataset_id}.{table_name}" 
+        table_id = f"{dataset_id}.{table_name}" 
         
         pandas_gbq.to_gbq(rental_df, table_id, project_id = "rental591analize", if_exists = "append")
         print("Today spider_591 is done.")
