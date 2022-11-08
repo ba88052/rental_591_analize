@@ -180,8 +180,8 @@ class Rantal_591_Spider():
             total_count, houses = rental_591_spider.search(filter_params, first_page = first_page, last_page = last_page)
             print(f"爬取{first_page}~{last_page-1}頁租屋資料")
             all_rental = {}
-            infor = ["title", "kind_name", "community", "area", "section_name"]
-            columns = ["title", "kind", "community", "area", "section", "shape", "layout", 
+            infor = ["post_id","title", "kind_name", "community", "area", "section_name"]
+            columns = ["post_id", "title", "kind", "community", "area", "section", "shape", "layout", 
                         "address","inName", "role", "phone", "phone_extension","mobile", 
                         "mobile_extension", "rule", "remark","price"]
             header = rental_591_spider.get_header(houses[0]["post_id"])

@@ -20,8 +20,8 @@ def get_test():
     all_rental = {}
     total_count, houses = rental_591_spider.search(rental_params)
     print("回傳第一頁內容")
-    infor = ["title", "kind_name", "community", "area", "section_name"]
-    columns = ["title", "kind", "community", "area", "section", "shape", "layout", 
+    infor = ["post_id","title", "kind_name", "community", "area", "section_name"]
+    columns = ["post_id", "title", "kind", "community", "area", "section", "shape", "layout", 
                 "address","inName", "role", "phone", "phone_extension","mobile", 
                 "mobile_extension", "rule", "remark","price"]
     header = rental_591_spider.get_header(houses[0]["post_id"])
@@ -52,8 +52,8 @@ def post_input():
         total_count, houses = rental_591_spider.search(rental_params, first_page = first_page, last_page = last_page)
         print(f"爬取{first_page}~{last_page-1}頁租屋資料")
         # print("houses:", houses[0]["post_id"])
-        infor = ["title", "kind_name", "community", "area", "section_name"]
-        columns = ["title", "kind", "community", "area", "section", "shape", "layout", 
+        infor = ["post_id","title", "kind_name", "community", "area", "section_name"]
+        columns = ["post_id", "title", "kind", "community", "area", "section", "shape", "layout", 
                     "address","inName", "role", "phone", "phone_extension","mobile", 
                     "mobile_extension", "rule", "remark","price"]
         try:
