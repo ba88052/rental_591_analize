@@ -6,6 +6,7 @@ import json
 import re
 import pandas as pd
 from google.cloud import bigquery as bq
+import pandas_gbq
 from datetime import datetime
 import os
 
@@ -98,12 +99,30 @@ class Rantal_591_Spider():
         information.append(rental["favData"]["address"])
         information.append(rental["linkInfo"]["imName"])
         information.append(rental["linkInfo"]["roleName"])
-        if rental["linkInfo"]["phone"]:
-            information.append(rental["linkInfo"]["phone"])
-            information.append(0)
+        phone  = rental["linkInfo"]["phone"]
+        phone = re.sub("-", "", phone)
+        mobile = rental["linkInfo"]["mobile"]
+        mobile = re.sub("-", "", mobile)
+        if phone:
+            try:
+                information.append(phone)
+                information.append(None)
+            except:
+                information.append(phone.split(",")[0])
+                information.append(phone.split(",")[1])
         else:
-            information.append(0)
-            information.append(rental["linkInfo"]["mobile"])
+            information.append(None)
+            information.append(None)
+        if mobile:
+            try:
+                information.append(mobile)
+                information.append(None)
+            except:
+                information.append(mobile.split(",")[0])
+                information.append(mobile.split(",")[1])
+        else:
+            information.append(None)
+            information.append(None)
         information.append(rental["service"]["rule"])       
         remark = rental["remark"]["content"]
         garbage_word = re.findall(r'(<.+?>)', remark)
@@ -114,49 +133,48 @@ class Rantal_591_Spider():
         return information
 
 
-    def daily_spider_to_GCP(self, test=True):
+    def daily_spider_to_GCP(self, test=False):
         #每日591爬蟲任務
         #與Bigquery建立連線並確認金鑰沒問題
-        #應顯示 <google.cloud.bigquery.client.Client object at xxxxxxxxxxxx>
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/spider_591/GCP_key.json"
         client = bq.Client()
         print(client)
+        #應顯示 <google.cloud.bigquery.client.Client object at xxxxxxxxxxxx>
 
         today = datetime.now().strftime("%Y-%m-%d")
         #爬取資料
         rental_591_spider = Rantal_591_Spider()
         with open ("app/spider_591/daily_spider_params.txt", "r") as params:
             filter_params  = json.loads(params.read())
+        print("搜尋591租屋網中...")
         total_count, houses = rental_591_spider.search(filter_params, testing = test)
         print('搜尋結果房屋總數：', total_count)
 
         all_rental = {}
         infor = ["title", "kind_name", "community", "area", "section_name"]
-        columns = ["title", "kind", "community", "area", "section", "shape", "layout", "address","inName", "role", "phone", "mobile", "rule", "remark","price"]
-
+        columns = ["title", "kind", "community", "area", "section", "shape", "layout", "address","inName", "role", "phone", "phone_extension","mobile", "mobile_extension", "rule", "remark","price"]
+        print("爬取租屋資訊中...")
         for i in houses:
             all_rental[i["post_id"]] = [i[inf] for inf in infor]+(rental_591_spider.get_detail_we_need(i["post_id"], spider = rental_591_spider))
         rental_df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)
+        # rental_df.to_csv("./check.csv")
         
         #把df丟進bigquery
+        print("把資料上傳bigquery...")
         dataset_id = "spider_591_rental_SET"#設定 Dataset 名稱，可以修改
+        dataset = bq.Dataset(f"{client.project}.{dataset_id}")
+        dataset.location = "asia-east1"     #設定資料位置，如不設定預設是 US
+        # dataset.default_table_expiration_ms = 30 * 24 * 60 * 60 * 1000    #設定資料過期時間，這邊設定 30 天過期
+        dataset.description = 'create_spider_591_rental_dataset location at asia-east1'    #設定 dataset 描述
         try:
-            dataset = bq.Dataset(f"{client.project}.{dataset_id}")
-            dataset.location = "asia-east1"     #設定資料位置，如不設定預設是 US
-            # dataset.default_table_expiration_ms = 30 * 24 * 60 * 60 * 1000    #設定資料過期時間，這邊設定 30 天過期
-            dataset.description = 'create_spider_591_rental_dataset location at asia-east1'    #設定 dataset 描述
             dataset = client.create_dataset(dataset) # Make an API request.
             print(f"Created dataset {client.project}.{dataset.dataset_id}")
         except:
             print(f"{dataset_id} Dataset Already Exist")
-
-        dataset_id = "spider_591_rental_SET"
-        dataset_ref = client.dataset(dataset_id)
-        table_id = f"{today}_RENTAL" 
-        table_ref = dataset_ref.table(table_id)
-        job = client.load_table_from_dataframe(rental_df, table_ref, location="asia-east1")
-        job.result()  # Waits for table load to complete.
-        assert job.state == "DONE"
+        table_name = f"{today}_RENTAL"
+        table_id = f"{client.project}.{dataset.dataset_id}.{table_name}" 
+        
+        pandas_gbq.to_gbq(rental_df, table_id, project_id = "rental591analize", if_exists = "append")
         print("Today spider_591 is done.")
 
 if __name__ == "__main__":
