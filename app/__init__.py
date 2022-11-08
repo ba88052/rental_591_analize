@@ -15,8 +15,9 @@ def get_test():
     rental_591_spider = spider_591.Rantal_591_Spider()
     with open ("app/test.txt", "r") as test:
         rental_params = json.loads(test.read())
-        total_count, houses = rental_591_spider.search(rental_params)
+        total_count, houses = rental_591_spider.search(rental_params, testing = True)
         print('搜尋結果房屋總數：', total_count)
+        print("回傳第一頁內容")
     all_rental = {}
     infor = ["title", "kind_name", "community", "area", "section_name"]
     columns = ["title", "kind", "community", "area", "section", "shape", "layout", "address","inName", "role", "phone", "phone_extension","mobile", "mobile_extension", "rule", "remark","price"]
@@ -44,7 +45,7 @@ def post_input():
 
 @app.route("/daily_spider", methods=["GET"])
 def daily_spider():
-    spider_591.Rantal_591_Spider().daily_spider_to_GCP(test = True)
+    spider_591.Rantal_591_Spider().daily_spider_to_GCP(test = False)
     # 篩選條件
     return("Today spider_591 is done.")
 

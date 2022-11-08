@@ -17,7 +17,7 @@ class Rantal_591_Spider():
         }
 
     # filter_params: 篩選參數
-    def search(self, filter_params=None, testing = True):  
+    def search(self, filter_params=None, testing = False):  
         test_page = 30  
         total_count = 0
         house_list = []
