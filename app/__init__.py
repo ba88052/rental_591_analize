@@ -15,8 +15,9 @@ def get_test():
     rental_591_spider = spider_591.Rantal_591_Spider()
     with open ("app/test.txt", "r") as test:
         rental_params = json.loads(test.read())
-        total_count = rental_591_spider.get_total_count(rental_params)
-        print('搜尋結果房屋總數：', total_count)
+    print("測試：搜尋591租屋網中...")
+    total_count = rental_591_spider.get_total_count(rental_params)
+    print('搜尋結果房屋總數：', total_count)
     all_rental = {}
     total_count, houses = rental_591_spider.search(rental_params)
     print("回傳第一頁內容")
@@ -42,6 +43,7 @@ def post_input():
     rental_591_spider = spider_591.Rantal_591_Spider()
     # 篩選條件
     rental_params = request.get_json()
+    # print(rental_params)
     print("搜尋591租屋網中...")
     total_count = rental_591_spider.get_total_count(rental_params)
     print('搜尋結果房屋總數：', total_count)
