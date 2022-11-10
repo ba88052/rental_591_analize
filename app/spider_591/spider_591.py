@@ -159,17 +159,35 @@ class Rantal_591_Spider():
     def daily_spider_to_GCP(self, test=False):
         #每日591爬蟲任務
         #與Bigquery建立連線並確認金鑰沒問題
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/spider_591/GCP_key.json"
+        if __name__ == "__main__":
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="GCP_key.json"
+        else:
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/spider_591/GCP_key.json"
         client = bq.Client()
         print(client)
         #應顯示 <google.cloud.bigquery.client.Client object at xxxxxxxxxxxx>
+
+        dataset_id = "spider_591_rental_SET"#設定 Dataset 名稱，可以修改
+        dataset = bq.Dataset(f"{client.project}.{dataset_id}")
+        dataset.location = "asia-east1"     #設定資料位置，如不設定預設是 US
+        # dataset.default_table_expiration_ms = 30 * 24 * 60 * 60 * 1000    #設定資料過期時間，這邊設定 30 天過期
+        dataset.description = 'create_spider_591_rental_dataset location at asia-east1'    #設定 dataset 描述
+        try:
+            dataset = client.create_dataset(dataset) # Make an API request.
+            print(f"Created dataset {client.project}.{dataset.dataset_id}")
+        except:
+            print(f"{dataset_id} Dataset Already Exist")
 
         today = datetime.now().strftime("%Y-%m-%d")
 
         #爬取資料
         rental_591_spider = Rantal_591_Spider()
-        with open ("app/spider_591/daily_spider_params.txt", "r") as params:
-            filter_params  = json.loads(params.read())
+        if __name__ == "__main__":
+            with open ("daily_spider_params.txt", "r") as params:
+                filter_params  = json.loads(params.read())
+        else:
+            with open ("app/spider_591/daily_spider_params.txt", "r") as params:
+                filter_params  = json.loads(params.read())
         print("搜尋591租屋網中...")
         total_count = rental_591_spider.get_total_count(filter_params)
         print('搜尋結果房屋總數：', total_count)
@@ -193,20 +211,10 @@ class Rantal_591_Spider():
                         spider = rental_591_spider, headers = header))
                 except:
                     print(f"ERROR in rental post_id={rental_post_id}")
-            rental_df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)    
+            rental_df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)
             # rental_df.to_csv("./check.csv")
             #把df丟進bigquery
             print(f"把{first_page}~{last_page-1}頁資料上傳bigquery...")
-            dataset_id = "spider_591_rental_SET"#設定 Dataset 名稱，可以修改
-            dataset = bq.Dataset(f"{client.project}.{dataset_id}")
-            dataset.location = "asia-east1"     #設定資料位置，如不設定預設是 US
-            # dataset.default_table_expiration_ms = 30 * 24 * 60 * 60 * 1000    #設定資料過期時間，這邊設定 30 天過期
-            dataset.description = 'create_spider_591_rental_dataset location at asia-east1'    #設定 dataset 描述
-            try:
-                dataset = client.create_dataset(dataset) # Make an API request.
-                print(f"Created dataset {client.project}.{dataset.dataset_id}")
-            except:
-                print(f"{dataset_id} Dataset Already Exist")
             table_name = f"{today}_RENTAL"
             table_id = f"{dataset_id}.{table_name}" 
             job = client.load_table_from_dataframe(rental_df, table_id, location="asia-east1")
