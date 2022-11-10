@@ -160,7 +160,7 @@ class Rantal_591_Spider():
         #每日591爬蟲任務
         #與Bigquery建立連線並確認金鑰沒問題
         if __name__ == "__main__":
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="GCP_key.json"
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/ba88052/rental_591_analize/app/spider_591/GPT_key.json"
         else:
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/spider_591/GCP_key.json"
         client = bq.Client()
@@ -183,7 +183,7 @@ class Rantal_591_Spider():
         #爬取資料
         rental_591_spider = Rantal_591_Spider()
         if __name__ == "__main__":
-            with open ("daily_spider_params.txt", "r") as params:
+            with open ("/home/ba88052/rental_591_analize/app/spider_591/daily_spider_params.txt", "r") as params:
                 filter_params  = json.loads(params.read())
         else:
             with open ("app/spider_591/daily_spider_params.txt", "r") as params:
