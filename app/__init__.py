@@ -121,7 +121,10 @@ def model_web():
                         "role", "girl_cant_live", "boy_cant_live",
                         "pet_cant_live", "cant_cooking"]
             for feature in features:
-                data[feature] = request.values[feature]
+                try:
+                    data[feature] = request.values[feature]
+                except:
+                    data[feature] = 0
             df_for_test = pd.DataFrame(data, index = [0])
             df_for_test.drop(["model"], axis = 1, inplace = True)
             if data["model"] == "XGB":

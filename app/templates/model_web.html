@@ -3,98 +3,103 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- <link rel="stylesheet" href={{ url_for('static', filename='normalize.css')}}>
+	<link rel="stylesheet" href={{ url_for('static', filename='style.css') }}> -->
     <meta charset="UTF-8">
-    <title>歡迎使用台中租屋租金預測模型</title>
+    <title>台中租屋租金預測模型</title>
 </head>
 
 <body>
     <form method="post">
-        <label>要使用的模型</label><br> 
-            <input type="radio" name="model" id="xgb" value="XGB">
-            <label for=xgb">XGBoost</label>
-            <input type="radio" name="model" id="keras" value="keras">
-            <label for="keras">TensorFlow Keras</label><br><br>
-        <label>坪數</label><br>
-            <input type="text" name="area"><br>
-        <label>臥室數量</label><br>
-            <input type="text" name="bedroom" value=""><br>
-        <label>客廳數量</label><br>
-            <input type="text" name="livingroom" value=""><br>
-        <label>浴廁數量</label><br>
-            <input type="text" name="bathroom" value=""><br><br>
-        
-        <label>區域</label><br>
-            <select id="" name="section">
-                <optgroup label="臺中市"></optgroup>
-                <option value="西屯區">西屯區</option>
-                <option value="北區">北區</option>
-                <option value="北屯區">北屯區</option>
-                <option value="西區">西區</option>
-                <option value="南區">南區</option>
-                <option value="南屯區">南屯區</option>
-                <option value="東區">東區</option>
-                <option value="大里區">大里區</option>
-                <option value="龍井區">龍井區</option>
-                <option value="太平區">太平區</option>
-                <option value="沙鹿區">沙鹿區</option>
-                <option value="中區">中區</option>
-                <option value="大雅區">大雅區</option>
-                <option value="豐原區">豐原區</option>
-                <option value="霧峰區">霧峰區</option>
-                <option value="潭子區">潭子區</option>
-                <option value="后里區">后里區</option>
-                <option value="清水區">清水區</option>
-                <option value="梧棲區">梧棲區</option>
-                <option value="烏日區">烏日區</option>
-                <option value="大甲區">大甲區</option>
-                <option value="大肚區">大肚區</option>
-                <option value="神岡區">神岡區</option>
-                <option value="外埔區">外埔區</option>
-                <option value="東勢區">東勢區</option>
-                <option value="新社區">新社區</option>
-                <option value="大安區">大安區</option>
-                <option value="石岡區">石岡區</option>
-                <option value="和平區">和平區</option>
-                </optgroup>
-            </select><br><br>
-        <label>房間類型</label><br>
-            <select id="" name="shape">
-                <option label="公寓">公寓</option>
-                <option label="電梯大樓">電梯大樓</option>
-                <option label="透天厝">透天厝</option>
-                <option label="別墅">別墅</option>
-                <option label="華廈">華廈</option>
-            </select><br><br>
-        <label>房間類型</label><br>
-            <select id="" name="kind">
-                <option label="整層住家">整層住家</option>
-                <option label="獨立套房">獨立套房</option>
-                <option label="分租套房">分租套房</option>
-                <option label="雅房">雅房</option>
-                <option label="車位">車位</option>
-            </select><br><br>
-        <label>由誰販售</label><br>
-            <select id="" name="role">
-                <option label="仲介">仲介</option>
-                <option label="房主">房主</option>
-                <option label="代理人">代理人</option>
-            </select><br><br>
+        <div class="container">
+            <h2>歡迎使用 台中租屋租金預測模型 </h2>
+            <h3>數據來源：591租屋網</h3>
+            <label>要使用的模型</label><br> 
+                <input type="radio" name="model" id="xgb" value="XGB" required="required">
+                <label for=xgb">XGBoost</label>
+                <input type="radio" name="model" id="keras" value="keras" required="required">
+                <label for="keras">TensorFlow Keras</label><br><br>
+            <label>坪數</label><br>
+                <input type="text" name="area" value="" required="required"><br>
+            <label>臥室數量(沒有填0)</label><br>
+                <input type="text" name="bedroom" value="1" required="required"><br>
+            <label>客廳數量(沒有填0)</label><br>
+                <input type="text" name="livingroom" value="0" required="required"><br>
+            <label>浴廁數量(沒有填0)</label><br>
+                <input type="text" name="bathroom" value="0" required="required"><br><br>
+            
+            <label>區域</label><br>
+                <select id="" name="section" required="required">
+                    <optgroup label="臺中市"></optgroup>
+                    <option value="西屯區">西屯區</option>
+                    <option value="北區">北區</option>
+                    <option value="北屯區">北屯區</option>
+                    <option value="西區">西區</option>
+                    <option value="南區">南區</option>
+                    <option value="南屯區">南屯區</option>
+                    <option value="東區">東區</option>
+                    <option value="大里區">大里區</option>
+                    <option value="龍井區">龍井區</option>
+                    <option value="太平區">太平區</option>
+                    <option value="沙鹿區">沙鹿區</option>
+                    <option value="中區">中區</option>
+                    <option value="大雅區">大雅區</option>
+                    <option value="豐原區">豐原區</option>
+                    <option value="霧峰區">霧峰區</option>
+                    <option value="潭子區">潭子區</option>
+                    <option value="后里區">后里區</option>
+                    <option value="清水區">清水區</option>
+                    <option value="梧棲區">梧棲區</option>
+                    <option value="烏日區">烏日區</option>
+                    <option value="大甲區">大甲區</option>
+                    <option value="大肚區">大肚區</option>
+                    <option value="神岡區">神岡區</option>
+                    <option value="外埔區">外埔區</option>
+                    <option value="東勢區">東勢區</option>
+                    <option value="新社區">新社區</option>
+                    <option value="大安區">大安區</option>
+                    <option value="石岡區">石岡區</option>
+                    <option value="和平區">和平區</option>
+                    </optgroup>
+                </select><br><br>
+            <label>房間類型</label><br>
+                <select id="" name="shape" required="required">
+                    <option label="電梯大樓">電梯大樓</option>
+                    <option label="公寓">公寓</option>
+                    <option label="透天厝">透天厝</option>
+                    <option label="別墅">別墅</option>
+                    <option label="華廈">華廈</option>
+                </select><br><br>
+            <label>房間類型</label><br>
+                <select id="" name="kind" required="required">
+                    <option label="獨立套房">獨立套房</option>
+                    <option label="分租套房">分租套房</option>
+                    <option label="雅房">雅房</option>
+                    <option label="整層住家">整層住家</option>
+                    <option label="車位">車位</option>
+                </select><br><br>
+            <label>由誰販售</label><br>
+                <select id="" name="role" required="required">
+                    <option label="仲介">仲介</option>
+                    <option label="房主">房主</option>
+                    <option label="代理人">代理人</option>
+                </select><br><br>
 
-        <label>特殊規定</label><br>
-        <input type="radio" name="girl_cant_live" id="girl" value="1">
-            <label for=girl">禁止女生住宿</label><br>
-        <input type="radio" name="boy_cant_live" id="boy" value="1">
-            <label for="boy">禁止男生住宿 </label><br>
-        <input type="radio" name="pet_cant_live" id="pet" value="1">
-            <label for="pet">禁養寵物 </label><br>
-        <input type="radio" name="cant_cooking" id="cooking" value="1">
-            <label for="cooking">不可開伙 </label><br><br>
-        <input type="submit" value="submit" name="send", id="send"><br><br>
-    </form>
-        <p>預測價格：{{ans}}</p>
-        <br>
-        <br>
-        <br>
+            <label>特殊規定</label><br>
+            <input type="checkbox" name="girl_cant_live" id="girl" value="1">
+                <label for=girl">禁止女生住宿</label><br>
+            <input type="checkbox" name="boy_cant_live" id="boy" value="1">
+                <label for="boy">禁止男生住宿 </label><br>
+            <input type="checkbox" name="pet_cant_live" id="pet" value="1">
+                <label for="pet">禁養寵物 </label><br>
+            <input type="checkbox" name="cant_cooking" id="cooking" value="1">
+                <label for="cooking">不可開伙 </label><br><br>
+            <input type="submit" value="submit" name="send", id="send"><br><br>
+            <p>預測價格：{{ans}}</p>
+            <br>
+            <br>
+        </div>
+    </form>    
 </body>
 </html>
 {% endblock %}
