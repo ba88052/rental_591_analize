@@ -1,21 +1,15 @@
-import numpy as np
 import pandas as pd
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, render_template, request
 from flask_cors import CORS
 import json
 import app.spider_591.spider_591 as spider_591
 import app.rental_price_model.rental_price_model as rental_price_model
-
-from flask import Flask, render_template, session, redirect, url_for
-from flask_wtf import FlaskForm
-from wtforms import (StringField, BooleanField, DateTimeField,
-RadioField, SelectField, TextField,
-TextAreaField,SubmitField)
-from wtforms.validators import DataRequired
+from flask import Flask, render_template
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder = "templates")
 app.config.from_object("app.config.DevelopmentConfig")
+app.config['SECRET_KEY'] = 'my_key'
 CORS(app)
 
 
@@ -115,53 +109,28 @@ def weekly_model_training():
 
 
 #---------------------------------------------------------#
-class model_web_form(FlaskForm):
-    model = StringField('要使用的模型', validators=[DataRequired()])
-    area = BooleanField('坪數')
-    bedroom = RadioField('臥室數量', choices=[('M','男生'),('F','女生')])
-    livingroom = SelectField('客廳數量', choices=[('sports','運動'),('travel','旅遊'),('movie','電影')])
-    bathroom= TextAreaField('浴廁數量')
-    section = BooleanField('區域')
-    kind = BooleanField('房間類型')
-    shape = BooleanField('大樓or房屋類型')
-    role = BooleanField('由誰販售')
-    girl_cant_live = BooleanField('特殊規定-禁止女生住宿')
-    boy_cant_live = BooleanField('特殊規定-禁止男生住宿')
-    pet_cant_live = BooleanField('特殊規定-禁養寵物')
-    cant_cooking = BooleanField('特殊規定-不可開伙')
-    submit = SubmitField("確認")
-
-@app.route("/model_web", methods=["GET"])
+@app.route("/model_web", methods=["GET", "POST"])
 def model_web():
-    form = model_web_form()
-    if form.validate_on_submit():
-        session['name'] = form.name.data
-        session['agreed'] = form.agreed.data
-        session['gender'] = form.gender.data
-        session['hobby'] = form.hobby.data
-        session['others'] = form.others.data
-        return redirect(url_for('thankyou'))
-    return render_template('home.html', form=form)
-
-
-
-
-    price_model = rental_price_model.Rental_price_model()
-    # 篩選條件
-    rental_data = request.get_json()
-    rental_data = dict(rental_data)
-    df_for_test = pd.DataFrame(rental_data, index = [0])
-    df_for_test.drop(["model"], axis = 1, inplace = True)
-    # print(df_for_test.info())
-    if rental_data["model"] == "XGB":
-        ans = price_model.XGB_predict(df_for_test)
-    elif rental_data["model"] == "keras":
-        ans = price_model.keras_predict(df_for_test)
-    print(ans)
-    return("順利預測 " + str(ans))
-
-
-
+    if request.method == "POST":
+        if request.values["send"] == "submit":
+            # print(request.values)
+            price_model = rental_price_model.Rental_price_model()
+            data = {}
+            features = ["model", "area", "bedroom", "livingroom",
+                        "bathroom", "section", "kind", "shape",
+                        "role", "girl_cant_live", "boy_cant_live",
+                        "pet_cant_live", "cant_cooking"]
+            for feature in features:
+                data[feature] = request.values[feature]
+            df_for_test = pd.DataFrame(data, index = [0])
+            df_for_test.drop(["model"], axis = 1, inplace = True)
+            if data["model"] == "XGB":
+                ans = price_model.XGB_predict(df_for_test)
+            elif data["model"] == "keras":
+                ans = price_model.keras_predict(df_for_test)
+            # print(ans)
+            return render_template('model_web.html', ans = str(ans))
+    return render_template('model_web.html', ans = "")
 
 
 # if __name__ == "__main__":
