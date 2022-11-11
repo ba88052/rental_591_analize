@@ -1,13 +1,14 @@
 Flask
 Flask-Cors
+Flask-WTF
+WTForms
 numpy
 pandas
 scikit-learn
 xgboost
+tensorflow
 beautifulsoup4
-seaborn
 requests
 google-cloud-bigquery
 pyarrow
-pandas_gbq
-gunicorn
+seaborn

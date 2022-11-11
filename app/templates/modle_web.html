@@ -1,0 +1,22 @@
+{% extends "footer.html"%}
+{% block content %}
+{% block content %}
+<div class="container">
+<p>歡迎使用台中租屋租金預測模型</p>
+<ul>
+<li>要使用的模型: {{session['model']}}</li>
+<li>坪數: {{session['area']}}</li>
+<li>臥室數量: {{session['bedroom']}}</li>
+<li>客廳數量: {{session['livingroom']}}</li>
+<li>浴廁數量: {{session['bathroom']}}</li>
+<li>區域: {{session['section']}}</li>
+<li>房間類型: {{session['kind']}}</li>
+<li>大樓or房屋類型: {{session['shape']}}</li>
+<li>由誰販售: {{session['role']}}</li>
+<li>特殊規定-禁止女生住宿: {{session['girl_cant_live']}}</li>
+<li>特殊規定-禁止男生住宿: {{session['boy_cant_live']}}</li>
+<li>特殊規定-禁養寵物: {{session['pet_cant_live']}}</li>
+<li>特殊規定-不可開伙: {{session['cant_cooking']}}</li>
+</ul>
+</div>
+{% endblock %}

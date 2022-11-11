@@ -156,7 +156,7 @@ class Rantal_591_Spider():
         return information
 
 
-    def daily_spider_to_GCP(self, test=False):
+    def daily_spider_to_GCP(self):
         #每日591爬蟲任務
         #與Bigquery建立連線並確認金鑰沒問題
         if __name__ == "__main__":
