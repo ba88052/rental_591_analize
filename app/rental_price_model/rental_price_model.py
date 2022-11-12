@@ -12,7 +12,6 @@ from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error as mse
 from sklearn.metrics import mean_absolute_error as mae
 from sklearn.metrics import mean_absolute_percentage_error as mape
-
 if __name__ == "__main__":
     from clean_data import get_clean_df, get_predict_df
 else:
@@ -41,7 +40,7 @@ class Rental_price_model():
     def get_training_data(self, df_train):
         df_train = get_clean_df(df_train)
         df_train = df_train.drop(["street", "title", "remark", "post_id", "__index_level_0__"], axis = 1)
-        df_train.to_csv("after_clean.csv")
+        # df_train.to_csv("after_clean.csv")
         df_train = df_train.astype("float")
         scaler = preprocessing.MinMaxScaler(feature_range = (0, 1))
         df_scaler = df_train.copy()
@@ -93,12 +92,12 @@ class Rental_price_model():
         for title, score in zip(score_title, scores):
             print(f"{title}:{score}")
         return(scores) 
- 
+
     def weekly_model_training(self):
         if __name__ == "__main__":
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="GCP_key.json"
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/ba88052/rental_591_analize/app/GCP_data_viewer_key.json"
         else:
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/rental_price_model/GCP_key.json"
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/GCP_data_viewer_key.json"
         client = bq.Client()
         print("連接GCP")
         print(client)

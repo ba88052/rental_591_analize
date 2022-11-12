@@ -12,3 +12,4 @@ requests
 google-cloud-bigquery
 pyarrow
 seaborn
+dash

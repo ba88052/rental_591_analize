@@ -138,3 +138,26 @@ def get_predict_df(df_for_clean):
     df_clean.drop(["section", "shape", "role", "kind"], axis = 1, inplace = True)
     df_clean = df_clean.astype("float")
     return df_clean
+def get_report_df(df_for_clean):
+    df_for_clean.reset_index(drop=True, inplace=True)
+    df_clean = df_for_clean.copy()
+    try:
+        df_clean.drop(["Unnamed: 0"], axis = 1, inplace = True)
+    except:
+        None
+    df_clean.drop(df_clean[df_clean["price"].isnull()].index, inplace = True)
+    df_clean = pd.concat([df_clean, get_street(df_clean),
+                        get_layout_spilt(df_clean), get_rule_spilt(df_clean)], axis = 1)
+    df_clean.drop(["inName", "phone", "mobile", 
+                "phone_extension", "mobile_extension", 
+                "community", "layout","rule", "title", 
+                "address", "remark","__index_level_0__"], axis = 1, inplace = True)
+    return df_clean
+def get_mean_price(df, parameter, fillter = None, symbols = None, limit= None):
+    return get_report_df(df).groupby(parameter).mean()["price"].reset_index()
+def get_count_number(df, parameter, fillter_col=None, fillter_value=None, symbols = None, limit= None):
+    if fillter_col == None:
+        return get_report_df(df).groupby(parameter).count()["post_id"].reset_index()
+    else:
+        df_report = get_report_df(df).groupby(parameter).count()["post_id"].reset_index()
+        return df_report[df_report[fillter_col] == fillter_value]

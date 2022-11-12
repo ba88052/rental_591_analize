@@ -1,19 +1,28 @@
-import pandas as pd
-from flask import Flask, render_template, request
-from flask_cors import CORS
+import os
+import flask
 import json
+import dash
+import pandas as pd
+from datetime import datetime
+from datetime import timedelta
+from flask_cors import CORS
+import plotly.graph_objs as go 
+import dash_core_components as dcc 
+import dash_html_components as html
+from google.cloud import bigquery as bq
+from dash.dependencies import Input, Output 
+from flask import Flask, render_template, request
 import app.spider_591.spider_591 as spider_591
 import app.rental_price_model.rental_price_model as rental_price_model
-from flask import Flask, render_template
+from app.rental_price_model.clean_data import get_mean_price, get_count_number
 
 
 app = Flask(__name__, template_folder = "templates")
 app.config.from_object("app.config.DevelopmentConfig")
 app.config['SECRET_KEY'] = 'my_key'
 CORS(app)
-
-
 #----------------------------------------------------------------#
+#Spider
 @app.route("/spider_591_test", methods=["GET"])
 def spider_test():
     rental_591_spider = spider_591.Rantal_591_Spider()
@@ -41,7 +50,6 @@ def spider_test():
     df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)
     js = df.to_json()
     return(js)
-
 @app.route("/spider_591_api", methods=["POST"])
 def get_spider():
     rental_591_spider = spider_591.Rantal_591_Spider()
@@ -77,7 +85,6 @@ def get_spider():
     df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)
     js = df.to_json()
     return(js)
-
 @app.route("/daily_spider", methods=["GET"])
 def daily_spider():
     spider_591.Rantal_591_Spider().daily_spider_to_GCP()
@@ -85,6 +92,7 @@ def daily_spider():
     return("Today spider_591 is done.")
 
 #----------------------------------------------------------------#
+#Model
 @app.route("/model_api", methods=["POST"])
 def model_predict():
     price_model = rental_price_model.Rental_price_model()
@@ -107,8 +115,6 @@ def weekly_model_training():
     # 篩選條件
     return("Weekly model training is done.")
 
-
-#---------------------------------------------------------#
 @app.route("/model_web", methods=["GET", "POST"])
 def model_web():
     if request.method == "POST":
@@ -134,6 +140,102 @@ def model_web():
             # print(ans)
             return render_template('model_web.html', ans = str(ans))
     return render_template('model_web.html', ans = "")
+
+#-----------------------------------------------------#
+#Data Platform
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/GCP_data_viewer_key.json"
+client = bq.Client()
+print(client)
+
+df_li = []
+for i in range(0,8):
+    today = (datetime.today() - timedelta(i)).strftime("%Y-%m-%d")
+    table_name = f"{today}_RENTAL"
+    try:
+        sql = f"""
+            SELECT *
+            FROM `rental591analize.spider_591_rental_SET.{table_name}`
+        """
+        df = client.query(sql).to_dataframe()
+        df["date"] = today
+    except:
+        continue
+    df_li.append(df)
+df_predict = pd.concat(df_li,axis=0)
+df_predict.drop_duplicates(inplace=True)
+# print(df_predict.head(3))
+target_list = ["平均價格", "個數統計"]
+parameter_list = [ "section", "kind", "shape", "role", "date", "street"]
+app_dash = dash.Dash(__name__, server = app, url_base_pathname = "/dash/")
+mean_price = get_mean_price(df_predict, ["section"])
+
+app_dash.layout = html.Div([
+    html.Div([
+        html.H1(children="台中租屋資訊數據儀表板",),
+
+        html.P(
+            children="選擇要做的分析",
+        ),
+        dcc.Dropdown(
+                    id='function',
+                    options=target_list,
+                    placeholder='選擇要做的分析',
+                    searchable=False,
+                    value="平均價格"
+                ),
+        html.P(
+            children="選擇參數",
+        ),
+        dcc.Dropdown(
+                    id='parameter_1',
+                    options=parameter_list,
+                    placeholder='組別參數1',
+                    searchable=False,
+                    value="section"
+                ), 
+        html.P(
+            children="選擇使用的圖",
+        ),
+        dcc.Dropdown(
+                    id='figure_type',
+                    options=["line", "bar"],
+                    placeholder='選擇使用的圖',
+                    searchable=False,
+                    value="line"
+                ),
+        dcc.Graph(
+                    id='rental_figure',
+                    figure= {
+                    "data": [go.Line(x = mean_price["section"], y = mean_price["price"])],
+                        "layout": {"title": "Average Price of Avocados"}}
+                )])
+])
+
+@app_dash.callback(Output('rental_figure', 'figure'),
+            [Input('function', 'value'),
+            Input('parameter_1', 'value'),
+            Input('figure_type', 'value')])
+def get_rental_figure(function_name, parameter_1, figure_type):
+    if function_name == "平均價格":
+        df_figure = get_mean_price(df_predict, [parameter_1])
+        x = df_figure[parameter_1]
+        y = df_figure["price"]
+    else:
+        df_figure = get_count_number(df_predict, [parameter_1])
+        x = df_figure[parameter_1]
+        y = df_figure["post_id"]
+    if figure_type == "bar":
+        return{
+            "data":[go.Bar(x = x, y = y )]
+        }
+    else:
+        return{
+            "data":[go.Line(x = x, y = y )]
+        }
+
+@app.route("/data_platform", methods=["GET"])
+def data_platform():
+    return flask.redirect("/dash")
 
 
 # if __name__ == "__main__":

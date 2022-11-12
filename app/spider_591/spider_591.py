@@ -160,9 +160,9 @@ class Rantal_591_Spider():
         #每日591爬蟲任務
         #與Bigquery建立連線並確認金鑰沒問題
         if __name__ == "__main__":
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/ba88052/rental_591_analize/app/spider_591/GCP_key.json"
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/ba88052/rental_591_analize/app/GCP_data_viewer_key.json"
         else:
-            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/spider_591/GCP_key.json"
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="app/GCP_data_viewer_key.json"
         client = bq.Client()
         print(client)
         #應顯示 <google.cloud.bigquery.client.Client object at xxxxxxxxxxxx>
