@@ -237,13 +237,12 @@ class Rantal_591_Spider():
             #把df丟進bigquery
             print(f"把{first_page}~{last_page-1}頁資料上傳bigquery...")
             table_name = f"{today}_RENTAL"
-            table_name = "2022-11-12_RENTAL"
             table_id = f"{dataset_id}.{table_name}" 
             job = client.load_table_from_dataframe(rental_df, table_id, location="asia-east1")
             job.result()  # Waits for table load to complete.
             assert job.state == "DONE"
             # pandas_gbq.to_gbq(rental_df, table_id, project_id = "rental591analize", if_exists = "append")
-            print(f"{first_page}~{last_page-1}資料上傳成功")
+            print(f"{first_page}~{last_page-1}頁資料上傳成功")
         print("Today spider_591 is done.")
 
 if __name__ == "__main__":
