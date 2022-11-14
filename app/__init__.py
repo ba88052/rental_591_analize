@@ -12,7 +12,13 @@ app = Flask(__name__, template_folder = "templates")
 app.config.from_object("app.config.DevelopmentConfig")
 app.config['SECRET_KEY'] = 'my_key'
 CORS(app)
-#----------------------------------------------------------------#
+
+#-----------------------------------------------------------------#
+#首頁
+@app.route("/")
+def index():
+    return "Hello!! Welcome to rental_591_analize"
+#-----------------------------------------------------------------#
 #Spider
 @app.route("/spider-591/test", methods=["GET"])
 def spider_test():
@@ -56,7 +62,7 @@ def daily_spider():
     # 篩選條件
     return("Today spider_591 is done.")
 
-#----------------------------------------------------------------#
+#-----------------------------------------------------------------#
 #Model
 @app.route("/model", methods=["POST"])
 def model_predict():
@@ -107,7 +113,7 @@ def model_web():
             return render_template('model_web.html', ans = str(ans))
     return render_template('model_web.html', ans = "")
 
-#-----------------------------------------------------#
+#-----------------------------------------------------------------#
 #Data Platform
 @app.route("/platform", methods=["GET"])
 def data_platform():

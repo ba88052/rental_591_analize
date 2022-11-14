@@ -1,14 +1,16 @@
+import re
+import os
+import json
 import time
 import random
 import requests
-from bs4 import BeautifulSoup
-import json
-import re
-import pandas as pd
-from google.cloud import bigquery as bq
 import pandas_gbq
+import pandas as pd
+from bs4 import BeautifulSoup
 from datetime import datetime
-import os
+from google.cloud import bigquery as bq
+
+
 
 class Rantal_591_Spider():
     def __init__(self):
@@ -235,6 +237,7 @@ class Rantal_591_Spider():
             #把df丟進bigquery
             print(f"把{first_page}~{last_page-1}頁資料上傳bigquery...")
             table_name = f"{today}_RENTAL"
+            table_name = "2022-11-12_RENTAL"
             table_id = f"{dataset_id}.{table_name}" 
             job = client.load_table_from_dataframe(rental_df, table_id, location="asia-east1")
             job.result()  # Waits for table load to complete.

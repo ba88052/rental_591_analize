@@ -1,14 +1,14 @@
+import os
 import numpy as np
 import xgboost as xgb
 import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
-from google.cloud import bigquery as bq
-import os
 from datetime import timedelta
 from datetime import datetime
-from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
+from google.cloud import bigquery as bq
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error as mse
 from sklearn.metrics import mean_absolute_error as mae
 from sklearn.metrics import mean_absolute_percentage_error as mape
