@@ -153,9 +153,9 @@ def get_report_df(df_for_clean):
                 "community", "layout","rule", "title", 
                 "address", "remark","__index_level_0__"], axis = 1, inplace = True)
     return df_clean
-def get_mean_price(df, parameter, fillter = None, symbols = None, limit= None):
-    return get_report_df(df).groupby(parameter).mean()["price"].reset_index()
-def get_count_number(df, parameter, fillter_col=None, fillter_value=None, symbols = None, limit= None):
+def get_mean_price(df, parameter):
+    return get_report_df(df).groupby(parameter).mean(numeric_only=True)["price"].reset_index()
+def get_count_number(df, parameter, fillter_col=None, fillter_value=None):
     if fillter_col == None:
         return get_report_df(df).groupby(parameter).count()["post_id"].reset_index()
     else:

@@ -15,6 +15,25 @@ class Rantal_591_Spider():
         self.headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 Edg/88.0.705.68',
         }
+    
+    def get_df_return_data(self, houses):
+        rental_591_spider = Rantal_591_Spider()
+        all_rental = {}
+        infor = ["post_id","title", "kind_name", "community", "area", "section_name"]
+        columns = ["post_id", "title", "kind", "community", "area", "section", "shape", "layout", 
+                    "address","inName", "role", "phone", "phone_extension","mobile", 
+                    "mobile_extension", "rule", "remark","price"]
+        header = rental_591_spider.get_header(houses[0]["post_id"])
+        for i in houses:
+            rental_post_id = i["post_id"]
+            try:
+                all_rental[rental_post_id] = [i[inf] for inf in infor]+(
+                    rental_591_spider.get_detail_we_need(i["post_id"], 
+                    spider = rental_591_spider, headers = header))
+            except:
+                print(f"ERROR in rental post_id={rental_post_id}")
+        df = pd.DataFrame.from_dict(all_rental, orient = "index", columns = columns)
+        return(df)
 
     def get_total_count(self, filter_params=None):
         total_count = 0
