@@ -1,6 +1,9 @@
-# 591租屋網分析與爬蟲API 
+# 591租屋網專案
 
-此專案使用爬蟲爬取591租屋網的租屋資料，並將Web API架設於GCP上。
+此專案主要有三項功能
+1. spider_591 - 爬取591租屋網資料的爬蟲
+2. price predict model - 運用租屋網資料建立的租金預測模型
+3. data_platform - 以網頁呈現的租屋網資料動態儀表板
 
 
 ## Get Start
@@ -16,6 +19,14 @@
     
     python main.py
 
-This app will be running on localhost:5000.
+
+This app will be running on localhost:8081.
+
+相關api使用請詳閱api文件：
+https://documenter.getpostman.com/view/17749172/2s8YmEy6KT
+或是git hub中的 api_documentation.pdf
+
+
+
 
 by Sam_Liao
