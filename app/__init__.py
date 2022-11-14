@@ -74,9 +74,9 @@ def model_predict():
     df_for_predict.drop(["model"], axis = 1, inplace = True)
     # print(df_for_test.info())
     if rental_data["model"] == "XGB":
-        ans = price_model.XGB_predict(df_for_predict)
+        ans = price_model.XGB_predict(df_for_predict)[0]
     elif rental_data["model"] == "keras":
-        ans = price_model.keras_predict(df_for_predict)
+        ans = price_model.keras_predict(df_for_predict)[0][0]
     print(ans)
     return(str(ans))
 
