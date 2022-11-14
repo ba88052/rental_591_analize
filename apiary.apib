@@ -1,80 +1,113 @@
 FORMAT: 1A
-HOST: https://polls.apiblueprint.org/
+HOST: http://35.229.148.113:8081/
 
 # rental_591_analize
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+This api contains three main functions.
+1. rental_591 spider
+2. price predict model 
+3. data platform
 
-## Questions Collection [/questions]
 
-### List All Questions [GET]
+## rental_591 spider [/spider-591]
+### rental_591 spider[POST]
+You can use this api to spider "http://rent.591.com.tw".
+
++ Request (application/json)
+
+            {
+                "showMore": "1",
+                "searchtype": "1",
+                "region": "8",
+                "section":"104",
+                "multiPrice": "",
+                "rentprice": "",
+                "kind": "",
+                "shape": "",
+                "multiNotice": "",
+                "multiRoom": "",
+                "multiArea": "",
+                "area": "",
+                "multiFloor": "",
+                "option": ""
+            }
 
 + Response 200 (application/json)
 
         [
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
+               {"post_id":{"13406220":13406220},
+               "title":{"13406220":"\u6b63\u6c99\u7530\u8def\u9ec3\u91d1\u5e97\u9762"},
+               "kind":{"13406220":"\u6574\u5c64\u4f4f\u5bb6"},
+               "community":{"13406220":""},
+               "area":{"13406220":"55"},
+               "section":{"13406220":"\u5927\u809a\u5340"},
+               "shape":{"13406220":"\u900f\u5929\u539d"},
+               "layout":{"13406220":"9\u623f3\u5ef34\u885b"},
+               "address":{"13406220":"\u53f0\u4e2d\u5e02\u5927\u809a\u5340\u6c99\u7530\u8def\u4e8c\u6bb5"},
+               "inName":{"13406220":"\u5f90\u91d1\u6885"},
+               "role":{"13406220":"\u4ef2\u4ecb"},
+               "phone":{"13406220":"0423372000"},
+               "phone_extension":{"13406220":null},
+               "mobile":{"13406220":"0968525915"},
+               "mobile_extension":{"13406220":null},
+               "rule":{"13406220":"\u4e0d\u53ef\u990a\u5bf5\u7269"},
+               "remark":{"13406220":"\u8fd1\u5927\u809a\u5e02\u5340\uff0c\
+               u71b1\u9b27\u975e\u51e1\uff0c\u9580\u53e3\u53ef\u505c\u96d9\
+               u8eca20\u7c73\u5927\u8def\uff0c\u8eca\u6f6e\u91cf\u5927\u9069
+               \u8fa6\u516c\u5ba4\uff0c\u6a13\u4e0a\u53ef\u4f4f\u5bb6\uff0c\
+               u53ef\u71df\u767b\r\n\u9644\u8fd1\u6709\u4fbf\u5229\u5546\u5e97
+               \u3001\u50b3\u7d71\u5e02\u5834\u3002"},
+               "price":{"13406220":38000}}
             }
         ]
 
-### Create a New Question [POST]
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+### rental_591 spider daily[GET /spider-591/daily]
+You can use this api to activate daily spider, which will push the data to bigquery.
+
++ Response 200 (application/Text)
+
+
+## price predict model [/model]
+### price predict model[POST]
+You can use this model to predict rental price.
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "model":"XGB",
+            "area": "35.7",
+            "bedroom": "4",
+            "livingroom": "2",
+            "bathroom": "2",
+            "section": "霧峰區", 
+            "kind": "整層住家",
+            "shape": "電梯大樓",
+            "role": "仲介", 
+            "girl_cant_live": 0,
+            "boy_cant_live": 1,
+            "pet_cant_live": 1,
+            "cant_cooking":0
         }
 
-+ Response 201 (application/json)
++ Response 200 (application/Text)
+    
+        28903.145
+    
 
-    + Headers
+### price predict model in web[GET /model/web]
+You can use the price predict model in web.
 
-            Location: /questions/2
++ Response 200 (application/Text)
+        
+        None
 
-    + Body
 
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
+## data platform [/platform]
+### data platform in web[GET]
+You can open a data platfrom in your browser.
+
+The data is coming from bigquery.
+
++ Response 200 (application/Text)
