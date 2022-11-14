@@ -1,7 +1,6 @@
 from app import app
 import os
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.system("python3 data_platform.py")
 
 @app.route("/")

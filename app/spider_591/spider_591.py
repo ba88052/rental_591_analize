@@ -237,6 +237,7 @@ class Rantal_591_Spider():
             #把df丟進bigquery
             print(f"把{first_page}~{last_page-1}頁資料上傳bigquery...")
             table_name = f"{today}_RENTAL"
+            table_name = "2022-11-12_RENTAL"
             table_id = f"{dataset_id}.{table_name}" 
             job = client.load_table_from_dataframe(rental_df, table_id, location="asia-east1")
             job.result()  # Waits for table load to complete.
