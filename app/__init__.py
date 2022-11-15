@@ -23,7 +23,7 @@ def index():
 @app.route("/spider-591/test", methods=["GET"])
 def spider_test():
     rental_591_spider = spider_591.Rantal_591_Spider()
-    with open ("app/test.txt", "r") as test:
+    with open ("app/spider_591/test.txt", "r") as test:
         rental_params = json.loads(test.read())
     print("測試：搜尋591租屋網中...")
     total_count = rental_591_spider.get_total_count(rental_params)

@@ -18,10 +18,11 @@
 套件安裝成功後，即可開始執行本專案。
     
     python main.py
-
-
+    
 This app will be running on localhost:8081.
 
+
+同時，本專案也會在GCP上運行，歡迎使用其中api功能
 相關api使用請詳閱api文件：
 https://documenter.getpostman.com/view/17749172/2s8YmEy6KT
 或是git hub中的 api_documentation.pdf
