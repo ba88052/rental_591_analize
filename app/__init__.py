@@ -110,7 +110,7 @@ def model_web():
             elif data["model"] == "keras":
                 ans = price_model.keras_predict(df_for_predict)[0][0]
             # print(ans)
-            return render_template('model_web.html', ans = str(ans))
+            return render_template('model_web.html', ans = str(abs(ans)))
     return render_template('model_web.html', ans = "")
 
 #-----------------------------------------------------------------#
