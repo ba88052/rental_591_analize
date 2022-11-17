@@ -51,7 +51,7 @@ class Rental_price_model():
         X_train, X_test, y_train, y_test = data_train
         params = {}
         dtrain = xgb.DMatrix(X_train, y_train)
-        num_rounds = 100 
+        num_rounds = 300 
         plst = params.items()
         xgb_model = xgb.train(plst, dtrain, num_rounds)
         dtest = xgb.DMatrix(X_test)
