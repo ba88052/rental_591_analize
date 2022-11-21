@@ -65,7 +65,6 @@ class Rantal_591_Spider():
     def search(self, filter_params=None, first_page = 0, last_page = 2):
         total_count = 0
         house_list = []
-
         #取得X-CSRF-TOKEN
         s = requests.Session()
         url = 'https://rent.591.com.tw/'
@@ -115,14 +114,10 @@ class Rantal_591_Spider():
         headers = self.headers.copy()
         headers['X-CSRF-TOKEN'] = token_item.get('content')
         headers['deviceid'] = s.cookies.get_dict()['T591_TOKEN']
-        # headers['token'] = s.cookies.get_dict()['PHPSESSID']
         headers['device'] = 'pc'
         return headers
 
     def get_house_detail(self, house_id, headers):
-        """ 房屋詳情
-        house_id: 房屋ID
-        """
         s = requests.Session()
         url = f'https://rent.591.com.tw/home/{house_id}'
         r = s.get(url, headers=self.headers)
@@ -188,7 +183,7 @@ class Rantal_591_Spider():
         print(client)
         #應顯示 <google.cloud.bigquery.client.Client object at xxxxxxxxxxxx>
 
-        dataset_id = "spider_591_rental_SET"#設定 Dataset 名稱，可以修改
+        dataset_id = "spider_591_rental_SET" #設定 Dataset 名稱，可以修改
         dataset = bq.Dataset(f"{client.project}.{dataset_id}")
         dataset.location = "asia-east1"     #設定資料位置，如不設定預設是 US
         # dataset.default_table_expiration_ms = 30 * 24 * 60 * 60 * 1000    #設定資料過期時間，這邊設定 30 天過期
