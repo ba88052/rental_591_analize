@@ -16,7 +16,7 @@ client = bq.Client()
 print(client)
 
 df_li = []
-for i in range(0,8):
+for i in range(0,15):
     today = (datetime.today() - timedelta(i)).strftime("%Y-%m-%d")
     table_name = f"{today}_RENTAL"
     try:
